@@ -1,4 +1,4 @@
-package com.lom;
+package com.lom.futures;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

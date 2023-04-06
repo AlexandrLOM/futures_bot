@@ -35,6 +35,10 @@ dependencies {
 //    testImplementation 'org.springframework.security:spring-security-test'
 //    testImplementation 'org.testcontainers:junit-jupiter'
 //    testImplementation 'org.testcontainers:postgresql'
+
+    // https://mvnrepository.com/artifact/io.github.binance/binance-futures-connector-java
+    implementation 'io.github.binance:binance-futures-connector-java:3.0.1'
+
 }
 
 dependencyManagement {
