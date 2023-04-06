@@ -5,6 +5,6 @@ import java.util.LinkedHashMap;
 public class ClientParametersUtil {
 
     public static LinkedHashMap<String, Object> createEmptyParameters(){
-        return new LinkedHashMap();
+        return new LinkedHashMap<>();
     }
 }
