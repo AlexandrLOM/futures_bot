@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class Bot {
 
-    FuturesClientService client;
+    AccountService accountService;
 
     @PostConstruct
     public void start() {
+
 
     }
 }
