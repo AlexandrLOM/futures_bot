@@ -36,7 +36,6 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
         params.put(Params.interval.name(), interval.getValue());
         Optional.of(limit).ifPresent(l -> params.put(Params.limit.name(), l));
         var result = klinesFunction.apply(params);
-        LinkedList<ArrayList<String>> list = new LinkedList<>();
         try {
             return jsonObjectMapper.convertList(result);
         } catch (JsonProcessingException e) {
@@ -44,16 +43,19 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
         }
     }
 
+    @Override
     public List<Kline> klines(Symbol symbol, Interval interval, Integer limit) {
         var list = getKlines(symbol, interval, limit, client.market()::klines);
         return list.stream().map(this::getKline).toList();
     }
 
+    @Override
     public List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit) {
         var list = getKlines(symbol, interval, limit, client.market()::markPriceKlines);
         return list.stream().map(this::getMarkPriceKline).toList();
     }
 
+    @Override
     public List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit) {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.pair.name(), pair.name());
