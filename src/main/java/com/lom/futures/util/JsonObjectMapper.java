@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,6 +19,12 @@ import java.util.List;
 public class JsonObjectMapper {
 
     ObjectMapper objectMapper;
+
+    public LinkedList<ArrayList<String>> convertList(String jsonString) throws JsonProcessingException {
+        return objectMapper.readValue(jsonString, new TypeReference<LinkedList<ArrayList<String>>>() {
+        });
+
+    }
 
     public List<FuturesBalance> convertFuturesBalance(String jsonString) throws JsonProcessingException {
         return objectMapper.readValue(jsonString, new TypeReference<List<FuturesBalance>>() {
