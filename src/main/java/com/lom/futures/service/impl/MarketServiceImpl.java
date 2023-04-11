@@ -30,44 +30,38 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
     JsonObjectMapper jsonObjectMapper;
 
     private LinkedList<ArrayList<String>> getKlines(Symbol symbol, Interval interval, Integer limit,
-                                                    Function<LinkedHashMap<String, Object>, String> klinesFunction) {
+                                                    Function<LinkedHashMap<String, Object>, String> klinesFunction)
+            throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.interval.name(), interval.getValue());
-        Optional.of(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
         var result = klinesFunction.apply(params);
-        try {
-            return jsonObjectMapper.convertList(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return jsonObjectMapper.convertList(result);
     }
 
     @Override
-    public List<Kline> klines(Symbol symbol, Interval interval, Integer limit) {
+    public List<Kline> klines(Symbol symbol, Interval interval, Integer limit) throws JsonProcessingException {
         var list = getKlines(symbol, interval, limit, client.market()::klines);
         return list.stream().map(this::getKline).toList();
     }
 
     @Override
-    public List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit) {
+    public List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit)
+            throws JsonProcessingException {
         var list = getKlines(symbol, interval, limit, client.market()::markPriceKlines);
         return list.stream().map(this::getMarkPriceKline).toList();
     }
 
     @Override
-    public List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit) {
+    public List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit)
+            throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.pair.name(), pair.name());
         params.put(Params.interval.name(), interval.getValue());
-        Optional.of(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
         var result = client.market().indexPriceKlines(params);
-        LinkedList<ArrayList<String>> list = new LinkedList<>();
-        try {
-            list = jsonObjectMapper.convertList(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        LinkedList<ArrayList<String>> list = jsonObjectMapper.convertList(result);
         return list.stream().map(this::getIndexPriceKline).toList();
     }
 
