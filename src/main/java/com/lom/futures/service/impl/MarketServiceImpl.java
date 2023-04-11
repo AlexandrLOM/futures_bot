@@ -34,7 +34,7 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.interval.name(), interval.getValue());
-        Optional.of(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
         var result = klinesFunction.apply(params);
         try {
             return jsonObjectMapper.convertList(result);
@@ -60,7 +60,7 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.pair.name(), pair.name());
         params.put(Params.interval.name(), interval.getValue());
-        Optional.of(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
         var result = client.market().indexPriceKlines(params);
         LinkedList<ArrayList<String>> list = new LinkedList<>();
         try {

@@ -5,5 +5,18 @@ public enum Params {
     symbol,
     pair,
     interval,
-    limit
+    limit,
+    side,
+    positionSide,
+    type,
+    quantity,
+    price,
+    stopPrice,
+    orderId,
+    origClientOrderId,
+    timestamp,
+    newOrderRespType
+
+
+
 }
