@@ -30,7 +30,8 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
     JsonObjectMapper jsonObjectMapper;
 
     private LinkedList<ArrayList<String>> getKlines(Symbol symbol, Interval interval, Integer limit,
-                                                    Function<LinkedHashMap<String, Object>, String> klinesFunction) throws JsonProcessingException {
+                                                    Function<LinkedHashMap<String, Object>, String> klinesFunction)
+            throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.interval.name(), interval.getValue());
@@ -46,7 +47,8 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
     }
 
     @Override
-    public List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit) throws JsonProcessingException {
+    public List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit)
+            throws JsonProcessingException {
         var list = getKlines(symbol, interval, limit, client.market()::markPriceKlines);
         return list.stream().map(this::getMarkPriceKline).toList();
     }
