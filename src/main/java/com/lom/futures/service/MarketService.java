@@ -1,5 +1,6 @@
 package com.lom.futures.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.dto.IndexPriceKline;
 import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.MarkPriceKline;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Kline> klines(Symbol symbol, Interval interval, Integer limit);
+    List<Kline> klines(Symbol symbol, Interval interval, Integer limit) throws JsonProcessingException;
 
-    List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit);
+    List<MarkPriceKline> markPriceKlines(Symbol symbol, Interval interval, Integer limit) throws JsonProcessingException;
 
-    List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit);
+    List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit) throws JsonProcessingException;
 }

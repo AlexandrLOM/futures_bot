@@ -1,5 +1,6 @@
 package com.lom.futures.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.enums.Interval;
 import com.lom.futures.enums.Symbol;
 import com.lom.futures.service.impl.MarketServiceImpl;
@@ -18,7 +19,7 @@ public class Bot {
     MarketServiceImpl marketService;
 
     @PostConstruct
-    public void start() {
+    public void start() throws JsonProcessingException {
 
         var result = marketService.klines(Symbol.BNBUSDT, Interval._1d, 2);
         System.out.println(result);

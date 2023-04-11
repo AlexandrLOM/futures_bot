@@ -16,7 +16,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -27,15 +30,11 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     JsonObjectMapper jsonObjectMapper;
 
     @Override
-    public List<FuturesBalance> futuresBalance() {
+    public List<FuturesBalance> futuresBalance() throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         var result = client.account().futuresAccountBalance(params);
-        List<FuturesBalance> futuresBalances = new ArrayList<>();
-        try {
-            futuresBalances = jsonObjectMapper.convertFuturesBalance(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); //TODO: to implement
-        }
+        List<FuturesBalance> futuresBalances = jsonObjectMapper.convertFuturesBalance(result);
+
         return futuresBalances.stream()
                 .filter(Objects::nonNull)
                 .filter(futuresBalance -> futuresBalance.getUpdateTime() != 0L)
@@ -48,7 +47,7 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
                              OrderType type,
                              Double quantity,
                              Double price,
-                             Double stopPrice) {
+                             Double stopPrice) throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
 
         params.put(Params.symbol.name(), symbol.name());
@@ -61,44 +60,40 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
         params.put(Params.newOrderRespType.name(), NewOrderRespType.RESULT.name());
 
         var result = client.account().newOrder(params);
-        try {
-            return jsonObjectMapper.convertNewOrder(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return jsonObjectMapper.convertNewOrder(result);
     }
 
-    public NewOrder newOrderMarketLong(Symbol symbol, Side side, Double quantity) {
+    public NewOrder newOrderMarketLong(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, side, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
     }
 
     @Override
-    public NewOrder newOrderMarketLongOpen(Symbol symbol, Double quantity) {
+    public NewOrder newOrderMarketLongOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.BUY, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
     }
 
     @Override
-    public NewOrder newOrderMarketLongClos(Symbol symbol, Double quantity) {
+    public NewOrder newOrderMarketLongClos(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
     }
 
-    public NewOrder newOrderMarketSort(Symbol symbol, Side side, Double quantity) {
+    public NewOrder newOrderMarketSort(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, side, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
     }
 
     @Override
-    public NewOrder newOrderMarketSortOpen(Symbol symbol, Double quantity) {
+    public NewOrder newOrderMarketSortOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.SELL, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
     }
 
     @Override
-    public NewOrder newOrderMarketSortClos(Symbol symbol, Double quantity) {
+    public NewOrder newOrderMarketSortClos(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
     }
 
     public Order queryOrder(Symbol symbol,
                             Long orderId,
-                            String origClientOrderId) {
+                            String origClientOrderId) throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         Optional.ofNullable(orderId).ifPresent(oi -> params.put(Params.orderId.name(), oi));
@@ -106,35 +101,28 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
         params.put(Params.timestamp.name(), Instant.now().toEpochMilli());
 
         var result = client.account().queryOrder(params);
-        try {
-            return jsonObjectMapper.convertOrder(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return jsonObjectMapper.convertOrder(result);
     }
 
     @Override
-    public Order queryOrder(Symbol symbol, Long orderId) {
+    public Order queryOrder(Symbol symbol, Long orderId) throws JsonProcessingException {
         return queryOrder(symbol, orderId, null);
     }
 
     @Override
-    public Order queryOrder(Symbol symbol, String origClientOrderId) {
+    public Order queryOrder(Symbol symbol, String origClientOrderId) throws JsonProcessingException {
         return queryOrder(symbol, null, origClientOrderId);
     }
 
     @Override
-    public LinkedList<Order> getAllOpenOrders(Symbol symbol) {
+    public LinkedList<Order> getAllOpenOrders(Symbol symbol) throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.timestamp.name(), Instant.now().toEpochMilli());
 
         var result = client.account().allOrders(params);
-        try {
-            return jsonObjectMapper.convertOrders(result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return jsonObjectMapper.convertOrders(result);
+
     }
 
 
