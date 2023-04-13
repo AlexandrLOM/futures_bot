@@ -16,11 +16,11 @@ public interface AccountService {
 
     NewOrder newOrderMarketLongOpen(Symbol symbol, Double quantity) throws JsonProcessingException;
 
-    NewOrder newOrderMarketLongClos(Symbol symbol, Double quantity) throws JsonProcessingException;
+    NewOrder newOrderMarketLongClose(Symbol symbol, Double quantity) throws JsonProcessingException;
 
-    NewOrder newOrderMarketSortOpen(Symbol symbol, Double quantity) throws JsonProcessingException;
+    NewOrder newOrderMarketShortOpen(Symbol symbol, Double quantity) throws JsonProcessingException;
 
-    NewOrder newOrderMarketSortClos(Symbol symbol, Double quantity) throws JsonProcessingException;
+    NewOrder newOrderMarketShortClose(Symbol symbol, Double quantity) throws JsonProcessingException;
 
     NewOrder queryOrder(Symbol symbol, Long orderId) throws JsonProcessingException;
 

@@ -73,7 +73,7 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     }
 
     @Override
-    public NewOrder newOrderMarketLongClos(Symbol symbol, Double quantity) throws JsonProcessingException {
+    public NewOrder newOrderMarketLongClose(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
     }
 
@@ -82,12 +82,12 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     }
 
     @Override
-    public NewOrder newOrderMarketSortOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
+    public NewOrder newOrderMarketShortOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.SELL, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
     }
 
     @Override
-    public NewOrder newOrderMarketSortClos(Symbol symbol, Double quantity) throws JsonProcessingException {
+    public NewOrder newOrderMarketShortClose(Symbol symbol, Double quantity) throws JsonProcessingException {
         return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
     }
 
