@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.dto.FuturesBalance;
 import com.lom.futures.dto.NewOrder;
 import com.lom.futures.dto.Order;
+import com.lom.futures.dto.Position;
 import com.lom.futures.enums.*;
 import com.lom.futures.service.AccountService;
 import com.lom.futures.service.FuturesClientService;
@@ -47,6 +48,7 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
                              OrderType type,
                              Double quantity,
                              Double price,
+                             Boolean closePosition,
                              Double stopPrice) throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
 
@@ -56,6 +58,7 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
         params.put(Params.type.name(), type.name());
         Optional.ofNullable(quantity).ifPresent(q -> params.put(Params.quantity.name(), q.toString()));
         Optional.ofNullable(price).ifPresent(p -> params.put(Params.price.name(), p));
+        Optional.ofNullable(closePosition).ifPresent(cp -> params.put(Params.closePosition.name(), cp));
         Optional.ofNullable(stopPrice).ifPresent(sp -> params.put(Params.stopPrice.name(), sp));
         params.put(Params.newOrderRespType.name(), NewOrderRespType.RESULT.name());
 
@@ -64,31 +67,41 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     }
 
     public NewOrder newOrderMarketLong(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, side, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, side, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
     }
 
     @Override
     public NewOrder newOrderMarketLongOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.BUY, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, Side.BUY, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
     }
 
     @Override
     public NewOrder newOrderMarketLongClose(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
+    }
+
+    @Override
+    public NewOrder newOrderStopMarketLong(Symbol symbol, Double stopPrice) throws JsonProcessingException {
+        return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.STOP_MARKET, null, null, Boolean.TRUE, stopPrice);
     }
 
     public NewOrder newOrderMarketSort(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, side, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, side, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
     }
 
     @Override
     public NewOrder newOrderMarketShortOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.SELL, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, Side.SELL, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
     }
 
     @Override
     public NewOrder newOrderMarketShortClose(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.MARKET, quantity, null, null);
+        return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
+    }
+
+    @Override
+    public NewOrder newOrderStopMarketShort(Symbol symbol, Double stopPrice) throws JsonProcessingException {
+        return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.STOP_MARKET, null, null, Boolean.TRUE, stopPrice);
     }
 
     public Order queryOrder(Symbol symbol,
@@ -115,15 +128,24 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     }
 
     @Override
-    public LinkedList<Order> getAllOpenOrders(Symbol symbol) throws JsonProcessingException {
+    public LinkedList<Order> getAllOpenOrders(Symbol symbol, Long timestamp) throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
-        params.put(Params.timestamp.name(), Instant.now().toEpochMilli());
+        params.put(Params.timestamp.name(), timestamp);
 
-        var result = client.account().allOrders(params);
+        var result = client.account().currentAllOpenOrders(params);
         return jsonObjectMapper.convertOrders(result);
 
     }
 
+    @Override
+    public List<Position> positionInformation(Symbol symbol, Long timestamp)  throws JsonProcessingException {
+        var params = ClientParametersUtil.createEmptyParameters();
+        params.put(Params.symbol.name(), symbol.name());
+        params.put(Params.timestamp.name(), timestamp);
+        var result = client.account().positionInformation(params);
+        return jsonObjectMapper.convertPositionInformation(result);
+
+    }
 
 }

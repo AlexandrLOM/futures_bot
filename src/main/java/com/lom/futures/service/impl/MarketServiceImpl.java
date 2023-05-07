@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.dto.IndexPriceKline;
 import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.MarkPriceKline;
+import com.lom.futures.dto.OrderBook;
 import com.lom.futures.enums.Interval;
 import com.lom.futures.enums.Pair;
 import com.lom.futures.enums.Params;
@@ -64,6 +65,16 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
         var result = client.market().indexPriceKlines(params);
         LinkedList<ArrayList<String>> list = jsonObjectMapper.convertList(result);
         return list.stream().map(this::getIndexPriceKline).toList();
+    }
+
+    @Override
+    public OrderBook depth(Symbol symbol, Integer limit)
+            throws JsonProcessingException {
+        var params = ClientParametersUtil.createEmptyParameters();
+        params.put(Params.symbol.name(), symbol.name());
+        Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        var result = client.market().depth(params);
+        return jsonObjectMapper.convertOrderBook(result);
     }
 
 }

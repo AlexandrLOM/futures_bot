@@ -15,7 +15,8 @@ public enum Params {
     orderId,
     origClientOrderId,
     timestamp,
-    newOrderRespType
+    newOrderRespType,
+    closePosition
 
 
 
