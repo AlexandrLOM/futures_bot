@@ -16,6 +16,7 @@ public class OpenCloseConfig {
     Double positionStopLossPercent;
     Double positionTakeProfitPercent;
 
+    Double zoneOfInsensitivityOpenPositionPercent;
     Double zoneOfInsensitivityTakeProfitPercent;
 
     Double quantity;
@@ -27,7 +28,8 @@ public class OpenCloseConfig {
                            Double positionTakeProfitPercent,
                            Double zoneOfInsensitivityTakeProfitPercent,
                            Double quantity,
-                           Double quantityMax) {
+                           Double quantityMax,
+                           Double zoneOfInsensitivityOpenPositionPercent) {
         this.symbol = symbol;
         this.zoneOfInsensitivityPercent = zoneOfInsensitivityPercent;
         this.positionStopLossPercent = positionStopLossPercent;
@@ -35,5 +37,6 @@ public class OpenCloseConfig {
         this.zoneOfInsensitivityTakeProfitPercent = zoneOfInsensitivityTakeProfitPercent;
         this.quantity = quantity;
         this.quantityMax = quantityMax;
+        this.zoneOfInsensitivityOpenPositionPercent = zoneOfInsensitivityOpenPositionPercent;
     }
 }

@@ -19,6 +19,8 @@ public interface AccountService {
 
     NewOrder newOrderStopMarketLong(Symbol symbol, Double stopPrice) throws JsonProcessingException;
 
+    NewOrder newOrderTakeProfitMarketLong(Symbol symbol, Double stopPrice) throws JsonProcessingException;
+
     NewOrder newOrderMarketLongClose(Symbol symbol, Double quantity) throws JsonProcessingException;
 
     NewOrder newOrderMarketShortOpen(Symbol symbol, Double quantity) throws JsonProcessingException;
@@ -27,6 +29,8 @@ public interface AccountService {
 
     NewOrder newOrderStopMarketShort(Symbol symbol, Double stopPrice) throws JsonProcessingException;
 
+    NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double stopPrice) throws JsonProcessingException;
+
     NewOrder queryOrder(Symbol symbol, Long orderId) throws JsonProcessingException;
 
     NewOrder queryOrder(Symbol symbol, String origClientOrderId) throws JsonProcessingException;
@@ -34,4 +38,6 @@ public interface AccountService {
     LinkedList<Order> getAllOpenOrders(Symbol symbol,  Long timestamp) throws JsonProcessingException;
 
     List<Position> positionInformation(Symbol symbol, Long timestamp) throws JsonProcessingException;
+
+    String cancelOrder(Symbol symbol, Long orderId);
 }

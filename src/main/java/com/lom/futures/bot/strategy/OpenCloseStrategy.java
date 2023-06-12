@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
+
 @Slf4j
 @Getter
 @ToString
@@ -23,16 +26,20 @@ public class OpenCloseStrategy {
     public Double stopLoss;
     private Double takeProfit;
 
+    private Double zoneOfInsensitivityOpenPosition;
     private Double zoneOfInsensitivityTakeProfit;
 
     public Position positionLong;
     public Position positionShot;
 
-    private Double highLevel = Double.MIN_VALUE;
-    private Double lowLevel = Double.MAX_VALUE;
+    private Double highLevel = MIN_VALUE;
+    private Double lowLevel = MAX_VALUE;
 
-    private Double takeProfitLong = Double.MAX_VALUE;
-    private Double takeProfitShort = Double.MIN_VALUE;
+    private Double openPositionLong = MAX_VALUE;
+    private Double openPositionShort = MIN_VALUE;
+
+    private Double takeProfitLong = MAX_VALUE;
+    private Double takeProfitShort = MIN_VALUE;
 
     private Double latestPrice;
 
@@ -49,6 +56,7 @@ public class OpenCloseStrategy {
         zoneOfInsensitivity = latestPrice / 100 * config.getZoneOfInsensitivityPercent();
         stopLoss = latestPrice / 100 * config.getPositionStopLossPercent();
         takeProfit = latestPrice / 100 * config.getPositionTakeProfitPercent();
+        zoneOfInsensitivityOpenPosition = latestPrice / 100 * config.getZoneOfInsensitivityOpenPositionPercent();
         zoneOfInsensitivityTakeProfit = latestPrice / 100 * config.getZoneOfInsensitivityTakeProfitPercent();
 
         log.info(config.getSymbol().name() + ". init: " + this);
@@ -80,33 +88,44 @@ public class OpenCloseStrategy {
 
     public Action getActionForLong() {
         if (positionLong.getEntryPrice() == 0L) {
-            var triggerPrice = lowLevel + zoneOfInsensitivity;
-            log.info(config.getSymbol().name() + ". LONG. OPEN. latestPrice > triggerPrice : " + latestPrice + " > " + triggerPrice);
-            if (latestPrice > triggerPrice) {
-                takeProfitLong = Double.MAX_VALUE;
-                return Action.OPEN_LONG;
+            var triggerOpenPosition = highLevel - zoneOfInsensitivity;
+            log.info(config.getSymbol().name() + ". LONG. OPEN. latestPrice < triggerOpenPosition : " + latestPrice + " < " + triggerOpenPosition);
+            if (latestPrice < triggerOpenPosition) {
+                openPositionLong = latestPrice + zoneOfInsensitivityOpenPosition;
+            }
+            if (openPositionLong != MAX_VALUE) {
+                log.info(config.getSymbol().name() + ". LONG. OPEN. latestPrice > openPositionLong : " + latestPrice + " > " + openPositionLong);
+                if (latestPrice > openPositionLong) {
+                    openPositionLong = MAX_VALUE;
+                    takeProfitLong = MAX_VALUE;
+                    highLevel = MIN_VALUE;
+                    return Action.OPEN_LONG;
+                }
             }
         }
         if (positionLong.getEntryPrice() != 0L) {
             if (latestPrice > positionLong.getEntryPrice()) {
-                var triggerTakeProfit = positionLong.getEntryPrice() + takeProfit + zoneOfInsensitivityTakeProfit;
+                var triggerTakeProfit = positionLong.getEntryPrice() + takeProfit;
                 log.info(config.getSymbol().name() + ". LONG. CLOSE. latestPrice > triggerTakeProfit : " + latestPrice + " > " + triggerTakeProfit);
                 if (latestPrice > triggerTakeProfit) {
                     takeProfitLong = latestPrice + zoneOfInsensitivityTakeProfit;
                 }
-                if (takeProfitLong != Double.MAX_VALUE) {
+                if (takeProfitLong != MAX_VALUE) {
                     log.info(config.getSymbol().name() + ". LONG. CLOSE. latestPrice < takeProfitLong : " + latestPrice + " < " + takeProfitLong);
                     if (latestPrice < takeProfitLong) {
-                        lowLevel = Double.MAX_VALUE;
                         return Action.CLOSE_LONG_TP;
                     }
                 }
             }
             if (latestPrice < positionLong.getEntryPrice()) {
-                var triggerStopLoss = positionLong.getEntryPrice() - stopLoss;
+                Double triggerStopLoss;
+                if (takeProfitLong != MAX_VALUE) {
+                    triggerStopLoss = takeProfitLong;
+                } else {
+                    triggerStopLoss = positionLong.getEntryPrice() - stopLoss;
+                }
                 log.info(config.getSymbol().name() + ". LONG. CLOSE. latestPrice < triggerStopLoss : " + latestPrice + " < " + triggerStopLoss);
                 if (latestPrice < triggerStopLoss) {
-                    lowLevel = Double.MAX_VALUE;
                     return Action.CLOSE_LONG_SL;
                 }
             }
@@ -116,33 +135,44 @@ public class OpenCloseStrategy {
 
     public Action getActionForShort() {
         if (positionShot.getEntryPrice() == 0L) {
-            var triggerPrice = highLevel - zoneOfInsensitivity;
-            log.info(config.getSymbol().name() + ". SHORT. OPEN. latestPrice < triggerPrice : " + latestPrice + " < " + triggerPrice);
-            if (latestPrice < triggerPrice) {
-                takeProfitShort = Double.MIN_VALUE;
-                return Action.OPEN_SHORT;
+            var triggerOpenPosition = lowLevel + zoneOfInsensitivity;
+            log.info(config.getSymbol().name() + ". SHORT. OPEN. latestPrice > triggerOpenPosition : " + latestPrice + " > " + triggerOpenPosition);
+            if (latestPrice > triggerOpenPosition) {
+                openPositionShort = latestPrice - zoneOfInsensitivityOpenPosition;
+            }
+            if (openPositionShort != MIN_VALUE) {
+                log.info(config.getSymbol().name() + ". SHORT. OPEN. latestPrice > openPositionShort : " + latestPrice + " < " + openPositionShort);
+                if (latestPrice < openPositionShort) {
+                    openPositionShort = MIN_VALUE;
+                    takeProfitShort = MIN_VALUE;
+                    lowLevel = MAX_VALUE;
+                    return Action.OPEN_SHORT;
+                }
             }
         }
         if (positionShot.getEntryPrice() != 0L) {
             if (latestPrice < positionShot.getEntryPrice()) {
-                var triggerTakeProfit = positionShot.getEntryPrice() - takeProfit - zoneOfInsensitivityTakeProfit;
+                var triggerTakeProfit = positionShot.getEntryPrice() - takeProfit;
                 log.info(config.getSymbol().name() + ". SHORT. CLOSE. latestPrice < triggerTakeProfit : " + latestPrice + " < " + triggerTakeProfit);
                 if (latestPrice < triggerTakeProfit) {
                     takeProfitShort = latestPrice + zoneOfInsensitivityTakeProfit;
                 }
-                if (takeProfitShort != Double.MIN_VALUE) {
+                if (takeProfitShort != MIN_VALUE) {
                     log.info(config.getSymbol().name() + ". SHORT. CLOSE. latestPrice > takeProfitShort : " + latestPrice + " > " + takeProfitShort);
                     if (latestPrice > takeProfitShort) {
-                        highLevel = Double.MIN_VALUE;
                         return Action.CLOSE_SHORT_TP;
                     }
                 }
             }
             if (latestPrice > positionShot.getEntryPrice()) {
-                var triggerStopLoss = positionShot.getEntryPrice() + stopLoss;
+                Double triggerStopLoss;
+                if (takeProfitShort != MIN_VALUE) {
+                    triggerStopLoss = takeProfitShort;
+                } else {
+                    triggerStopLoss = positionShot.getEntryPrice() + stopLoss;
+                }
                 log.info(config.getSymbol().name() + ". SHORT. CLOSE. latestPrice > triggerStopLoss : " + latestPrice + " > " + triggerStopLoss);
                 if (latestPrice > triggerStopLoss) {
-                    highLevel = Double.MIN_VALUE;
                     return Action.CLOSE_SHORT_SL;
                 }
             }

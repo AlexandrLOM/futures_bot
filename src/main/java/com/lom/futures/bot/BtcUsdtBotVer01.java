@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import static com.lom.futures.util.Math.round;
+
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class BtcUsdtBotVer01 extends OpenCloseStrategy implements Bot {
-
-    final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.###");
+public class BtcUsdtBotVer01 extends OpenCloseStrategy {
+//        implements Bot {
 
     final AccountService accountService;
 
@@ -41,7 +42,7 @@ public class BtcUsdtBotVer01 extends OpenCloseStrategy implements Bot {
         log.info(config.getSymbol().name() + ". init: " + this);
     }
 
-    @Override
+//    @Override
     public void doMoney(ContextBot context) {
 
         setParams(context.getPositions());
@@ -62,7 +63,7 @@ public class BtcUsdtBotVer01 extends OpenCloseStrategy implements Bot {
                 case CLOSE_LONG_SL -> {
                     log.info(config.getSymbol().name() + ". LONG action CLOSE SL!");
                     accountService.newOrderMarketLongClose(config.getSymbol(), quantityLong);
-                    quantityLong = Double.parseDouble(DECIMAL_FORMAT.format(quantityLong * 3));
+                    quantityLong = round((quantityLong * 3), 3);
                     log.info(config.getSymbol().name() + ". LONG action CLOSE SL! quantityLong = " + quantityLong);
                     if (quantityLong > config.getQuantityMax()) {
                         quantityLong = config.getQuantity();
@@ -88,7 +89,7 @@ public class BtcUsdtBotVer01 extends OpenCloseStrategy implements Bot {
                 case CLOSE_SHORT_SL -> {
                     log.info(config.getSymbol().name() + ". SHORT action CLOSE SL!");
                     accountService.newOrderMarketShortClose(config.getSymbol(), quantityShort);
-                    quantityShort = Double.parseDouble(DECIMAL_FORMAT.format(quantityShort * 3));
+                    quantityShort = round((quantityShort * 3), 3);
                     log.info(config.getSymbol().name() + ". SHORT action CLOSE SL! quantityShort = " + quantityShort);
                     if (quantityShort > config.getQuantityMax()) {
                         quantityShort = config.getQuantity();

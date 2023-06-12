@@ -4,6 +4,19 @@ public enum Symbol {
 
     BTCUSDT,
     ETHUSDT,
-    BNBUSDT
+    BNBUSDT,
+    SOLUSDT,
+    DOGEUSDT,
+    ATOMUSDT,
+
+
+    XRPUSDT,
+    AGIXUSDT,
+    LTCUSDT,
+    MASKUSDT,
+    CFXUSDT,
+    INJUSDT,
+    RNDRUSDT,
+    ARBUSDT
 
 }

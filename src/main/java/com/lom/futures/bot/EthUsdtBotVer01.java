@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.Objects;
 
 import static com.lom.futures.util.Math.round;
@@ -19,7 +18,8 @@ import static com.lom.futures.util.Math.round;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class EthUsdtBotVer01 extends OpenCloseStrategy implements Bot {
+public class EthUsdtBotVer01 extends OpenCloseStrategy {
+//        implements Bot {
 
     final AccountService accountService;
 
@@ -40,7 +40,7 @@ public class EthUsdtBotVer01 extends OpenCloseStrategy implements Bot {
         log.info(config.getSymbol().name() + ". init: " + this);
     }
 
-    @Override
+    //    @Override
     public void doMoney(ContextBot context) {
 
         setParams(context.getPositions());
@@ -61,7 +61,7 @@ public class EthUsdtBotVer01 extends OpenCloseStrategy implements Bot {
                 case CLOSE_LONG_SL -> {
                     log.info(config.getSymbol().name() + ". LONG action CLOSE SL!");
                     accountService.newOrderMarketLongClose(config.getSymbol(), quantityLong);
-                    quantityLong = round((quantityLong * 3), 3);
+                    quantityLong = round((quantityLong * 2), 3);
                     if (quantityLong > config.getQuantityMax()) {
                         quantityLong = config.getQuantity();
                     }
@@ -87,7 +87,7 @@ public class EthUsdtBotVer01 extends OpenCloseStrategy implements Bot {
                 case CLOSE_SHORT_SL -> {
                     log.info(config.getSymbol().name() + ". SHORT action CLOSE SL!");
                     accountService.newOrderMarketShortClose(config.getSymbol(), quantityShort);
-                    quantityShort = round((quantityShort * 3), 3);
+                    quantityShort = round((quantityShort * 2), 3);
                     log.info(config.getSymbol().name() + ". SHORT action CLOSE SL! quantityShort = " + quantityShort);
                     if (quantityShort > config.getQuantityMax()) {
                         quantityShort = config.getQuantity();

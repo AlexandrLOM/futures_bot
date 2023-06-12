@@ -12,12 +12,13 @@ public class OpenCloseBeanConfig {
     public OpenCloseConfig configBTCUSDT() {
         return new OpenCloseConfig(
                 Symbol.BTCUSDT,
-                0.2,
-                0.3,
-                0.7,
+                0.4,
                 0.15,
+                0.1,
+                0.1,
                 0.001,
-                0.01);
+                0.01,
+                0.1);
     }
 
     @Bean
@@ -25,11 +26,12 @@ public class OpenCloseBeanConfig {
         return new OpenCloseConfig(
                 Symbol.ETHUSDT,
                 0.2,
+                0.3,
+                0.0,
                 0.2,
-                0.2,
-                0.1,
                 0.03,
-                0.5);
+                0.5,
+                0.1);
     }
 
 }

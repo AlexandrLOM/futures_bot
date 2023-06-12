@@ -9,6 +9,7 @@ import com.lom.futures.enums.*;
 import com.lom.futures.service.AccountService;
 import com.lom.futures.service.FuturesClientService;
 import com.lom.futures.service.helpe.AccountServiceHelper;
+import com.lom.futures.service.impl.order.*;
 import com.lom.futures.util.ClientParametersUtil;
 import com.lom.futures.util.JsonObjectMapper;
 import lombok.AccessLevel;
@@ -16,11 +17,9 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -29,6 +28,14 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
 
     FuturesClientService client;
     JsonObjectMapper jsonObjectMapper;
+
+
+    OrderService orderService;
+    OrderMarket orderMarket;
+    OrderStopMarket orderStopMarket;
+    OrderTakeProfitMarket orderTakeProfitMarket;
+    QueryOrder queryOrder;
+    PositionService positionService;
 
     @Override
     public List<FuturesBalance> futuresBalance() throws JsonProcessingException {
@@ -42,110 +49,86 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
                 .toList();
     }
 
-    public NewOrder newOrder(Symbol symbol,
-                             Side side,
-                             PositionSide positionSide,
-                             OrderType type,
-                             Double quantity,
-                             Double price,
-                             Boolean closePosition,
-                             Double stopPrice) throws JsonProcessingException {
-        var params = ClientParametersUtil.createEmptyParameters();
-
-        params.put(Params.symbol.name(), symbol.name());
-        params.put(Params.side.name(), side.name());
-        Optional.ofNullable(positionSide).ifPresent(ps -> params.put(Params.positionSide.name(), ps));
-        params.put(Params.type.name(), type.name());
-        Optional.ofNullable(quantity).ifPresent(q -> params.put(Params.quantity.name(), q.toString()));
-        Optional.ofNullable(price).ifPresent(p -> params.put(Params.price.name(), p));
-        Optional.ofNullable(closePosition).ifPresent(cp -> params.put(Params.closePosition.name(), cp));
-        Optional.ofNullable(stopPrice).ifPresent(sp -> params.put(Params.stopPrice.name(), sp));
-        params.put(Params.newOrderRespType.name(), NewOrderRespType.RESULT.name());
-
-        var result = client.account().newOrder(params);
-        return jsonObjectMapper.convertNewOrder(result);
-    }
+    // newOrder
 
     public NewOrder newOrderMarketLong(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, side, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
+        return orderMarket.newOrderMarketLong(symbol, side, quantity);
     }
 
     @Override
     public NewOrder newOrderMarketLongOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.BUY, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
+        return orderMarket.newOrderMarketLongOpen(symbol, quantity);
     }
 
     @Override
     public NewOrder newOrderMarketLongClose(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.MARKET, quantity, null, null, null);
-    }
-
-    @Override
-    public NewOrder newOrderStopMarketLong(Symbol symbol, Double stopPrice) throws JsonProcessingException {
-        return newOrder(symbol, Side.SELL, PositionSide.LONG, OrderType.STOP_MARKET, null, null, Boolean.TRUE, stopPrice);
+        return orderMarket.newOrderMarketLongClose(symbol, quantity);
     }
 
     public NewOrder newOrderMarketSort(Symbol symbol, Side side, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, side, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
+        return orderMarket.newOrderMarketSort(symbol, side, quantity);
     }
 
     @Override
     public NewOrder newOrderMarketShortOpen(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.SELL, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
+        return orderMarket.newOrderMarketShortOpen(symbol, quantity);
     }
 
     @Override
     public NewOrder newOrderMarketShortClose(Symbol symbol, Double quantity) throws JsonProcessingException {
-        return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.MARKET, quantity, null, null, null);
+        return orderMarket.newOrderMarketShortClose(symbol, quantity);
+    }
+
+    // newOrderStopMarket
+
+    @Override
+    public NewOrder newOrderStopMarketLong(Symbol symbol, Double stopPrice) throws JsonProcessingException {
+        return orderStopMarket.newOrderStopMarketLong(symbol, stopPrice);
     }
 
     @Override
     public NewOrder newOrderStopMarketShort(Symbol symbol, Double stopPrice) throws JsonProcessingException {
-        return newOrder(symbol, Side.BUY, PositionSide.SHORT, OrderType.STOP_MARKET, null, null, Boolean.TRUE, stopPrice);
+        return orderStopMarket.newOrderStopMarketShort(symbol, stopPrice);
     }
 
-    public Order queryOrder(Symbol symbol,
-                            Long orderId,
-                            String origClientOrderId) throws JsonProcessingException {
-        var params = ClientParametersUtil.createEmptyParameters();
-        params.put(Params.symbol.name(), symbol.name());
-        Optional.ofNullable(orderId).ifPresent(oi -> params.put(Params.orderId.name(), oi));
-        Optional.ofNullable(origClientOrderId).ifPresent(ocoi -> params.put(Params.origClientOrderId.name(), ocoi));
-        params.put(Params.timestamp.name(), Instant.now().toEpochMilli());
+    // newOrderTakeProfitMarket
 
-        var result = client.account().queryOrder(params);
-        return jsonObjectMapper.convertOrder(result);
+    @Override
+    public NewOrder newOrderTakeProfitMarketLong(Symbol symbol, Double profitPrice) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketLong(symbol, profitPrice);
     }
 
     @Override
+    public NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double profitPrice) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketShort(symbol, profitPrice);
+    }
+
+
+    // queryOrder
+
+    @Override
     public Order queryOrder(Symbol symbol, Long orderId) throws JsonProcessingException {
-        return queryOrder(symbol, orderId, null);
+        return queryOrder.queryOrder(symbol, orderId);
     }
 
     @Override
     public Order queryOrder(Symbol symbol, String origClientOrderId) throws JsonProcessingException {
-        return queryOrder(symbol, null, origClientOrderId);
+        return queryOrder.queryOrder(symbol, origClientOrderId);
     }
 
     @Override
     public LinkedList<Order> getAllOpenOrders(Symbol symbol, Long timestamp) throws JsonProcessingException {
-        var params = ClientParametersUtil.createEmptyParameters();
-        params.put(Params.symbol.name(), symbol.name());
-        params.put(Params.timestamp.name(), timestamp);
-
-        var result = client.account().currentAllOpenOrders(params);
-        return jsonObjectMapper.convertOrders(result);
-
+        return orderService.getAllOpenOrders(symbol, timestamp);
     }
 
     @Override
     public List<Position> positionInformation(Symbol symbol, Long timestamp)  throws JsonProcessingException {
-        var params = ClientParametersUtil.createEmptyParameters();
-        params.put(Params.symbol.name(), symbol.name());
-        params.put(Params.timestamp.name(), timestamp);
-        var result = client.account().positionInformation(params);
-        return jsonObjectMapper.convertPositionInformation(result);
+        return positionService.positionInformation(symbol, timestamp);
+    }
 
+    @Override
+    public String cancelOrder(Symbol symbol, Long orderId) {
+        return orderService.cancelOrder(symbol, orderId, null);
     }
 
 }
