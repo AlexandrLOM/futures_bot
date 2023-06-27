@@ -8,6 +8,7 @@ public enum Symbol {
     SOLUSDT,
     DOGEUSDT,
     ATOMUSDT,
+    APTUSDT,
 
 
     XRPUSDT,

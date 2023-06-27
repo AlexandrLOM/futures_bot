@@ -15,20 +15,20 @@ public class OpenAndWaitBeanConfig {
         return Map.of(Symbol.ETHUSDT,
                 new OpenAndWaitConfig(
                         Symbol.ETHUSDT,
-                        10.0,
-                        10.0,
-                        10.0,
-                        10.0,
+                        4.0,
+                        4.0,
+                        4.0,
+                        4.0,
                         0.02,
-                        0.16),
+                        0.08),
                 Symbol.BNBUSDT,
                 new OpenAndWaitConfig(
                         Symbol.BNBUSDT,
-                        2.0,
-                        2.0,
-                        2.0,
-                        2.0,
-                        0.05,
+                        1.5,
+                        1.5,
+                        1.5,
+                        1.5,
+                        0.07,
                         0.8),
                 Symbol.SOLUSDT,
                 new OpenAndWaitConfig(
@@ -42,11 +42,11 @@ public class OpenAndWaitBeanConfig {
                 Symbol.ATOMUSDT,
                 new OpenAndWaitConfig(
                         Symbol.ATOMUSDT,
-                        0.07,
-                        0.07,
-                        0.07,
-                        0.07,
-                        1.0,
+                        0.08,
+                        0.08,
+                        0.08,
+                        0.08,
+                        1.4,
                         16.0)
 
         );

@@ -1,5 +1,6 @@
 package com.lom.futures.storage;
 
+import com.lom.futures.bot.strategy.dto.BetResult;
 import com.lom.futures.enums.PositionSide;
 import com.lom.futures.enums.Symbol;
 import lombok.Getter;
@@ -9,17 +10,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class MapBet {
+public class MapBet<E> {
 
     @Getter
-    private Map<Map<Symbol, PositionSide>, ArrayDequeFixSize> bets;
+    private Map<Map<Symbol, PositionSide>, ArrayDequeFixSize<E>> bets;
 
 
-    public MapBet(Set<Symbol> symbols, Integer sizeMax) {
+    public MapBet(Set<Symbol> symbols, Integer sizeMax, Integer devaultValue) {
         bets = new HashMap<>();
         for (Symbol symbol : symbols) {
-            bets.put(Map.of(symbol, PositionSide.LONG), new ArrayDequeFixSize(sizeMax));
-            bets.put(Map.of(symbol, PositionSide.SHORT), new ArrayDequeFixSize(sizeMax));
+            bets.put(Map.of(symbol, PositionSide.LONG), new ArrayDequeFixSize(sizeMax, devaultValue));
+            bets.put(Map.of(symbol, PositionSide.SHORT), new ArrayDequeFixSize(sizeMax, devaultValue));
+        }
+    }
+
+    public MapBet(Set<Symbol> symbols, Integer sizeMax, BetResult devaultValue) {
+        bets = new HashMap<>();
+        for (Symbol symbol : symbols) {
+            bets.put(Map.of(symbol, PositionSide.BOTH), new ArrayDequeFixSize(sizeMax, devaultValue));
         }
     }
 
@@ -37,7 +45,7 @@ public class MapBet {
                 .size();
     }
 
-    public void addBet(Symbol symbol, PositionSide positionSide, Integer bit) {
+    public void addBet(Symbol symbol, PositionSide positionSide, E bit) {
         bets.get(Map.of(symbol, positionSide)).addFirst(bit);
     }
 
@@ -46,7 +54,11 @@ public class MapBet {
         return bets.get(Map.of(symbol, positionSide));
     }
 
-    public Integer getLastBet(Symbol symbol, PositionSide positionSide) {
+    public E getLastBet(Symbol symbol, PositionSide positionSide) {
         return bets.get(Map.of(symbol, positionSide)).getFirstValue();
+    }
+
+    public E getLastTheEndBet(Symbol symbol, PositionSide positionSide) {
+        return bets.get(Map.of(symbol, positionSide)).getLastValue();
     }
 }

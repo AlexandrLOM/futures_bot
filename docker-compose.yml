@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  postgres:
+    image: uselagoon/postgres-15
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: futures_bot_db

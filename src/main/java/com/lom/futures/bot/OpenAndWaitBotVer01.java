@@ -54,7 +54,7 @@ public class OpenAndWaitBotVer01 extends OpenAndWaitStrategy {
         log.info("quantitysLong: " + quantitysLong.toString());
         log.info("quantitysShort: " + quantitysShort.toString());
 
-        mapBet = new MapBet(config.keySet(), 4);
+        mapBet = new MapBet(config.keySet(), 4, 0);
     }
 
 //    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 5)

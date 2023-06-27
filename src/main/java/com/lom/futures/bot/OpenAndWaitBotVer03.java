@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.bot.strategy.OpenAndWaitStrategy;
 import com.lom.futures.bot.strategy.config.OpenAndWaitConfig;
 import com.lom.futures.db.service.HistoryBetService;
-import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.Position;
-import com.lom.futures.enums.Interval;
 import com.lom.futures.enums.OrderType;
 import com.lom.futures.enums.PositionSide;
 import com.lom.futures.enums.Symbol;
@@ -28,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
+public class OpenAndWaitBotVer03 extends OpenAndWaitStrategy {
 
     public final static UUID TAG = UUID.randomUUID();
 
@@ -39,9 +37,10 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
     Map<Symbol, OpenAndWaitConfig> config;
 
     MapBet<Integer> mapBetHistory;
+    MapBet<Integer> mapBetHistoryLast2;
 
     @Autowired
-    public OpenAndWaitBotVer02(Map<Symbol,
+    public OpenAndWaitBotVer03(Map<Symbol,
             OpenAndWaitConfig> config,
                                AccountService accountService,
                                MarketService marketService,
@@ -52,6 +51,7 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
         this.historyBetService = historyBetService;
 
         mapBetHistory = new MapBet(config.keySet(), 100, 0);
+        mapBetHistoryLast2 = new MapBet(config.keySet(), 2, 0);
     }
 
 //    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 5)
@@ -71,13 +71,11 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
             if (positionLong.getEntryPrice() == 0.0) {
                 orderProcessing(symbol, PositionSide.LONG);
 
-                if (openLong(symbol)) {
-                    openPositionLong(symbol);
+                openPositionLong(symbol);
 
-                    positions = getPosition(symbol);
-                    positionLong = getPosition(positions, symbol, PositionSide.LONG);
+                positions = getPosition(symbol);
+                positionLong = getPosition(positions, symbol, PositionSide.LONG);
 
-                }
             }
             if (positionLong.getEntryPrice() != 0.0) {
                 addOrdersForPositionsLong(symbol, positionLong);
@@ -91,14 +89,10 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
             if (positionShort.getEntryPrice() == 0.0) {
                 orderProcessing(symbol, PositionSide.SHORT);
 
-                if (openShort(symbol)) {
+                openPositionShort(symbol);
 
-                    openPositionShort(symbol);
-
-                    positions = getPosition(symbol);
-                    positionShort = getPosition(positions, symbol, PositionSide.SHORT);
-                }
-
+                positions = getPosition(symbol);
+                positionShort = getPosition(positions, symbol, PositionSide.SHORT);
             }
             if (positionShort.getEntryPrice() != 0.0) {
                 addOrdersForPositionsShort(symbol, positionShort);
@@ -120,7 +114,6 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
             if (Objects.equals(OrderType.STOP_MARKET, order.getOrigType())) {
                 mapBetHistory.addBet(symbol, positionSide, 1);
                 historyBetService.save(symbol, positionSide, 1);
-                processing(symbol);
             }
             log.info(symbol.name() + " " + " " + positionSide.name() + " - " + mapBetHistory.getBet(symbol, positionSide));
         });
@@ -167,35 +160,12 @@ public class OpenAndWaitBotVer02 extends OpenAndWaitStrategy {
         return positions;
     }
 
-    private Boolean openLong(Symbol symbol) {
-        var kline = getKlines15m2limit(symbol).get(1);
-        var kline2 = getKlines15m2limit(symbol).get(0);
-        log.info(symbol.name() + " openLong? !(Open > Close) " + kline.getOpen() + " > " + kline.getClose());
-        return (!(kline.getOpen() > kline.getClose()));
-    }
-
-    private Boolean openShort(Symbol symbol) {
-        var kline = getKlines15m2limit(symbol).get(1);
-        var kline2 = getKlines15m2limit(symbol).get(0);
-        log.info(symbol.name() + " openShort? !(Open < Close) " + kline.getOpen() + " < " + kline.getClose());
-        return (!(kline.getOpen() < kline.getClose()));
-    }
-
-    private List<Kline> getKlines15m2limit(Symbol symbol) {
-        List<Kline> klines = new LinkedList<>();
-        try {
-            klines = marketService.klines(symbol, Interval._15m, 2);
-        } catch (JsonProcessingException e) {
-            System.out.println(e);
-        }
-        return klines;
-    }
-
     private Double getQuantity(Symbol symbol, PositionSide positionSide) {
         var lastBet = mapBetHistory.getLastBet(symbol, positionSide);
+        var lastSecondBet = mapBetHistory.getLastTheEndBet(symbol, positionSide);
 
-        if (lastBet == 1) {
-            return Math.round(config.get(symbol).getQuantity() * 5, 3);
+        if (lastBet == -1 && lastSecondBet == 1) {
+            return Math.round(config.get(symbol).getQuantity() * 10, 3);
         }
         return config.get(symbol).getQuantity();
     }

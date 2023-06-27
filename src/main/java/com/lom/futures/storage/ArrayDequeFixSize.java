@@ -4,22 +4,23 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayDeque;
-import java.util.Optional;
 
 @ToString()
-public class ArrayDequeFixSize {
+public class ArrayDequeFixSize<E> {
 
     private int sizeMax;
+    private E defaultValue;
 
     @Getter
-    private ArrayDeque<Integer> array;
+    private ArrayDeque<E> array;
 
-    public ArrayDequeFixSize(Integer sizeMax) {
+    public ArrayDequeFixSize(Integer sizeMax, E defaultValue) {
         this.sizeMax = sizeMax;
+        this.defaultValue = defaultValue;
         this.array = new ArrayDeque<>();
     }
 
-    public void addFirst(Integer value) {
+    public void addFirst(E value) {
         array.addFirst(value);
 
         if (array.size() > sizeMax) {
@@ -27,8 +28,12 @@ public class ArrayDequeFixSize {
         }
     }
 
-    public Integer getFirstValue(){
-        return array.isEmpty() ? 0 : array.getFirst();
+    public E getFirstValue(){
+        return array.isEmpty() ? defaultValue : array.getFirst();
+    }
+
+    public E getLastValue(){
+        return array.isEmpty() ? defaultValue : array.getLast();
     }
 
 }
