@@ -1,4 +1,4 @@
-package com.lom.futures.bot.strategy.config;
+package com.lom.futures.bot.strategy.config.old;
 
 import com.lom.futures.enums.Symbol;
 import lombok.AccessLevel;

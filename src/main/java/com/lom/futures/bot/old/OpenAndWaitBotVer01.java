@@ -1,8 +1,8 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lom.futures.bot.strategy.OpenAndWaitStrategy;
-import com.lom.futures.bot.strategy.config.OpenAndWaitConfig;
+import com.lom.futures.bot.strategy.old.OpenAndWaitStrategy;
+import com.lom.futures.bot.strategy.config.old.OpenAndWaitConfig;
 import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.Position;
 import com.lom.futures.enums.Interval;
@@ -18,12 +18,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -9,6 +9,13 @@ public enum Symbol {
     DOGEUSDT,
     ATOMUSDT,
     APTUSDT,
+    BCHUSDT,
+    DOTUSDT,
+    NEARUSDT,
+    DEFIUSDT,
+    ADAUSDT,
+
+
 
 
     XRPUSDT,

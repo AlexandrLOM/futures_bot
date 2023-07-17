@@ -1,8 +1,7 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lom.futures.bot.strategy.BreakdownStrategy;
-import com.lom.futures.bot.strategy.OpenCloseStrategy;
+import com.lom.futures.bot.strategy.old.BreakdownStrategy;
 import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.context.ContextBot;
 import com.lom.futures.enums.Symbol;

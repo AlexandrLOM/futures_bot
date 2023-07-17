@@ -1,11 +1,10 @@
-package com.lom.futures.bot.strategy;
+package com.lom.futures.bot.strategy.old;
 
 import com.lom.futures.dto.Order;
 import com.lom.futures.dto.Position;
 import com.lom.futures.enums.OrderType;
 import com.lom.futures.enums.PositionSide;
 import com.lom.futures.enums.Symbol;
-import com.lom.futures.enums.bot.Action;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +16,8 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 @ToString
-public class OpenAndWaitStrategy {
+public class OpenOneSideStrategy {
 
-    public void init(List<Position> positions) {
-    }
-
-    public void setParams(List<Position> positions) {
-    }
 
     public Position getPosition(List<Position> positions, Symbol symbol, PositionSide positionSide) {
         return positions.stream()
@@ -40,20 +34,9 @@ public class OpenAndWaitStrategy {
                         && Objects.equals(positionSide, order.getPositionSide()));
     }
 
-    public Stream<Order> getOrders(List<Order> orders, Symbol symbol, PositionSide positionSide) {
+    public Stream<Order> getOrders(List<Order> orders, Symbol symbol) {
         return orders.stream()
-                .filter(order -> Objects.equals(symbol, order.getSymbol())
-                        && Objects.equals(positionSide, order.getPositionSide()));
-    }
-
-    public Action getActionForLong() {
-
-        return Action.WAIT;
-    }
-
-    public Action getActionForShort() {
-
-        return Action.WAIT;
+                .filter(order -> Objects.equals(symbol, order.getSymbol()));
     }
 
 }

@@ -1,8 +1,8 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lom.futures.bot.strategy.OpenCloseStrategy;
-import com.lom.futures.bot.strategy.config.OpenCloseConfig;
+import com.lom.futures.bot.strategy.old.OpenCloseStrategy;
+import com.lom.futures.bot.strategy.config.old.OpenCloseConfig;
 import com.lom.futures.dto.context.ContextBot;
 import com.lom.futures.service.AccountService;
 import lombok.AccessLevel;

@@ -1,6 +1,6 @@
-package com.lom.futures.bot.strategy;
+package com.lom.futures.bot.strategy.old;
 
-import com.lom.futures.bot.strategy.config.SequentialOpenCloseConfig;
+import com.lom.futures.bot.strategy.config.old.SequentialOpenCloseConfig;
 import com.lom.futures.dto.Position;
 import com.lom.futures.enums.PositionSide;
 import com.lom.futures.enums.Symbol;

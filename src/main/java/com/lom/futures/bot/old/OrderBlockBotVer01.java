@@ -1,6 +1,7 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
-import com.lom.futures.bot.strategy.OrderBlockStrategy;
+import com.lom.futures.bot.Bot;
+import com.lom.futures.bot.strategy.old.OrderBlockStrategy;
 import com.lom.futures.bot.strategy.config.OrderBlockConfig;
 import com.lom.futures.dto.context.ContextBot;
 import com.lom.futures.enums.Symbol;

@@ -1,8 +1,8 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lom.futures.bot.strategy.OpenOneSideStrategy;
-import com.lom.futures.bot.strategy.config.OpenOneSideConfig;
+import com.lom.futures.bot.strategy.old.OpenOneSideStrategy;
+import com.lom.futures.bot.strategy.config.old.OpenOneSideConfig;
 import com.lom.futures.bot.strategy.dto.BetResult;
 import com.lom.futures.db.service.HistoryBetService;
 import com.lom.futures.dto.Position;
@@ -17,12 +17,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -71,7 +69,7 @@ public class OpenOneSideBotVer01 extends OpenOneSideStrategy {
         mapBetHistoryLast2 = new MapBet<>(config.keySet(), 2, defaultValue);
     }
 
-    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 5)
+//    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 5)
     public void doMoney() {
 
         for (Symbol symbol : config.keySet()) {

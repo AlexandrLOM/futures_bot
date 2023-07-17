@@ -1,4 +1,4 @@
-package com.lom.futures.bot.strategy;
+package com.lom.futures.bot.strategy.old;
 
 import com.lom.futures.bot.strategy.config.OrderBlockConfig;
 import com.lom.futures.dto.OrderBook;

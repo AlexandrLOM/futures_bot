@@ -6,5 +6,5 @@ import com.lom.futures.enums.Symbol;
 
 public interface HistoryBetService {
 
-    HistoryBet save(Symbol symbol, PositionSide positionSide, Integer bet);
+    HistoryBet save(Symbol symbol, PositionSide positionSide, Integer result);
 }

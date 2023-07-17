@@ -1,6 +1,6 @@
-package com.lom.futures.bot.strategy.config.bean;
+package com.lom.futures.bot.strategy.config.bean.old;
 
-import com.lom.futures.bot.strategy.config.SequentialOpenCloseConfig;
+import com.lom.futures.bot.strategy.config.old.SequentialOpenCloseConfig;
 import com.lom.futures.enums.Symbol;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

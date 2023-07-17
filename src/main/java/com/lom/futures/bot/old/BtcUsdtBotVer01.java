@@ -1,18 +1,16 @@
-package com.lom.futures.bot;
+package com.lom.futures.bot.old;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lom.futures.bot.strategy.OpenCloseStrategy;
-import com.lom.futures.bot.strategy.config.OpenCloseConfig;
+import com.lom.futures.bot.strategy.old.OpenCloseStrategy;
+import com.lom.futures.bot.strategy.config.old.OpenCloseConfig;
 import com.lom.futures.dto.context.ContextBot;
 import com.lom.futures.service.AccountService;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.Objects;
 
 import static com.lom.futures.util.Math.round;
