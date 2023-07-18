@@ -18,4 +18,12 @@ public class Math {
         var multiplier = java.lang.Math.pow(10, roundTo);
         return java.lang.Math.round(value * multiplier) / multiplier;
     }
+
+    public static Double findNumberFromPercent(Double whole, Double present) {
+        return (whole / 100D) * present;
+    }
+
+    public static Double findNumberFromPercentAndRound(Double whole, Double present, Integer roundTo, Symbol symbol) {
+        return round(findNumberFromPercent(whole, present), roundTo, symbol);
+    }
 }

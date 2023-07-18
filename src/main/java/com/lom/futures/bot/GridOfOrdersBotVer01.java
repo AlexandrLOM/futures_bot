@@ -25,6 +25,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.lom.futures.util.Math.findNumberFromPercentAndRound;
+
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
@@ -61,6 +63,22 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
         var positionLong = getPosition(positions, symbol, PositionSide.LONG);
         var positionShort = getPosition(positions, symbol, PositionSide.SHORT);
         var lastKline = getGetLastKline(symbol);
+        var takeProfitLong = findNumberFromPercentAndRound(
+                lastKline.getClose(), config.get(symbol).getTakeProfitLong(), 3, symbol);
+        var takeProfitShort = findNumberFromPercentAndRound(
+                lastKline.getClose(), config.get(symbol).getTakeProfitShort(), 3, symbol);
+
+//        var takeProfitLong = config.get(symbol).getTakeProfitLong();
+//        var takeProfitShort = config.get(symbol).getTakeProfitShort();
+//
+//        switch(symbol){
+//            case ADAUSDT, BTCUSDT, ETHUSDT -> {
+//                takeProfitLong = findNumberFromPercentAndRound(
+//                        lastKline.getClose(), config.get(symbol).getTakeProfitLong(), 3, symbol);
+//                takeProfitShort = findNumberFromPercentAndRound(
+//                        lastKline.getClose(), config.get(symbol).getTakeProfitShort(), 3, symbol);
+//            }
+//        }
 
         try {
             if (lastKline.getOpen() < lastKline.getClose()) {
@@ -70,11 +88,11 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                     historyBetService.save(symbol, PositionSide.LONG, 1);
                 } else {
                     var valueProfit = calculateTakeProfit(positionLong.getPositionAmt(),
-                            config.get(symbol).getQuantity(),
-                            config.get(symbol).getTakeProfitLong());
+                            config.get(symbol).getQuantity(),takeProfitLong);
                     log.info("LONG: " + symbol.name() + " " + positionLong.getMarkPrice()
                             + " < " + (positionLong.getEntryPrice() - valueProfit)
-                            + " / " + valueProfit + " / " + config.get(symbol).getTakeProfitLong());
+                            + " / " + valueProfit + " (" + takeProfitLong
+                            + ") / " + config.get(symbol).getTakeProfitLong());
                     if (positionLong.getMarkPrice() < positionLong.getEntryPrice() - valueProfit) {
                         openPositionLong(symbol, positionLong);
                         orderProcessing(symbol, PositionSide.LONG);
@@ -90,11 +108,11 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                     historyBetService.save(symbol, PositionSide.SHORT, 1);
                 } else {
                     var valueProfit = calculateTakeProfit(java.lang.Math.abs(positionShort.getPositionAmt()),
-                            config.get(symbol).getQuantity(),
-                            config.get(symbol).getTakeProfitShort());
+                            config.get(symbol).getQuantity(), takeProfitShort);
                     log.info("SHORT: " + symbol.name() + " " + positionShort.getMarkPrice()
                             + " > " + (positionShort.getEntryPrice() + valueProfit)
-                            + " / " + valueProfit + " / " + config.get(symbol).getTakeProfitShort());
+                            + " / " + valueProfit + " (" + takeProfitShort
+                            + ") / " + config.get(symbol).getTakeProfitShort());
                     if (positionShort.getMarkPrice() > positionShort.getEntryPrice() + valueProfit) {
                         openPositionShort(symbol, positionShort);
                         orderProcessing(symbol, PositionSide.SHORT);
@@ -107,12 +125,11 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             positionLong = getPosition(positions, symbol, PositionSide.LONG);
             positionShort = getPosition(positions, symbol, PositionSide.SHORT);
             if (positionLong.getEntryPrice() != 0.0) {
-                addOrdersForPositionsLong(symbol, positionLong);
+                addOrdersForPositionsLong(symbol, positionLong, takeProfitLong);
             }
             if (positionShort.getEntryPrice() != 0.0) {
-                addOrdersForPositionsShort(symbol, positionShort);
+                addOrdersForPositionsShort(symbol, positionShort, takeProfitShort);
             }
-
 
         } catch (JsonProcessingException ex) {
             log.error(symbol.name());
@@ -154,27 +171,27 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
     }
 
 
-    private void addOrdersForPositionsLong(Symbol symbol, Position positionLong) throws JsonProcessingException {
+    private void addOrdersForPositionsLong(Symbol symbol, Position position, Double takeProfit) throws JsonProcessingException {
         var ordersLong = accountService.getAllOpenOrders(symbol, Instant.now().toEpochMilli());
         if (!isPresentOrder(ordersLong, symbol, OrderType.TAKE_PROFIT_MARKET, PositionSide.LONG)) {
             accountService.newOrderTakeProfitMarketLong(symbol,
-                    actualQuantityAboveMax(symbol, positionLong)
-                            ? Math.round(positionLong.getEntryPrice()
-                            + (config.get(symbol).getTakeProfitLong() / 2), 2, symbol)
-                            : Math.round(positionLong.getEntryPrice()
-                            + config.get(symbol).getTakeProfitLong(), 2, symbol));
+                    actualQuantityAboveMax(symbol, position)
+                            ? Math.round(position.getEntryPrice()
+                            + (takeProfit / 2), 2, symbol)
+                            : Math.round(position.getEntryPrice()
+                            + takeProfit, 2, symbol));
         }
     }
 
-    private void addOrdersForPositionsShort(Symbol symbol, Position positionShort) throws JsonProcessingException {
+    private void addOrdersForPositionsShort(Symbol symbol, Position position, Double takeProfit) throws JsonProcessingException {
         var ordersShort = accountService.getAllOpenOrders(symbol, Instant.now().toEpochMilli());
         if (!isPresentOrder(ordersShort, symbol, OrderType.TAKE_PROFIT_MARKET, PositionSide.SHORT)) {
             accountService.newOrderTakeProfitMarketShort(symbol,
-                    actualQuantityAboveMax(symbol, positionShort)
-                            ? Math.round(positionShort.getEntryPrice()
-                            - (config.get(symbol).getTakeProfitLong() / 2), 2, symbol)
-                            : Math.round(positionShort.getEntryPrice()
-                            - config.get(symbol).getTakeProfitLong(), 2, symbol));
+                    actualQuantityAboveMax(symbol, position)
+                            ? Math.round(position.getEntryPrice()
+                            - (takeProfit / 2), 2, symbol)
+                            : Math.round(position.getEntryPrice()
+                            - takeProfit, 2, symbol));
         }
     }
 
@@ -207,12 +224,19 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
         return klines;
     }
 
-    public Kline getGetLastKline(Symbol symbol) {
+    public Kline getGetLastKline2(Symbol symbol) {
         return Optional.ofNullable(getKlineList(symbol, Interval._1h, 1).stream()
                         .findFirst()
                         .orElse(Kline.builder().build()))
                 .get();
+    }
 
+    public Kline getGetLastKline(Symbol symbol) {
+        var klines = getKlineList(symbol, Interval._30m, 2);
+        return Kline.builder()
+                .open(klines.get(0).getOpen())
+                .close(klines.get(1).getClose())
+                .build();
     }
 
 
