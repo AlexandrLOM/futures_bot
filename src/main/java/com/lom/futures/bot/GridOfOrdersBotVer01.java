@@ -3,7 +3,6 @@ package com.lom.futures.bot;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lom.futures.bot.strategy.GridStrategy;
 import com.lom.futures.bot.strategy.config.GridConfig;
-import com.lom.futures.db.service.HistoryBetService;
 import com.lom.futures.dto.Kline;
 import com.lom.futures.dto.Position;
 import com.lom.futures.enums.Interval;
@@ -12,7 +11,6 @@ import com.lom.futures.enums.PositionSide;
 import com.lom.futures.enums.Symbol;
 import com.lom.futures.service.AccountService;
 import com.lom.futures.service.MarketService;
-import com.lom.futures.storage.MapBet;
 import com.lom.futures.util.Math;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -34,7 +32,6 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
 
     final AccountService accountService;
     final MarketService marketService;
-    final HistoryBetService historyBetService;
 
     Map<Symbol, GridConfig> config;
 
@@ -42,12 +39,10 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
     public GridOfOrdersBotVer01(Map<Symbol,
             GridConfig> gridConfig,
                                 AccountService accountService,
-                                MarketService marketService,
-                                HistoryBetService historyBetService) {
+                                MarketService marketService) {
         this.config = gridConfig;
         this.accountService = accountService;
         this.marketService = marketService;
-        this.historyBetService = historyBetService;
     }
 
     @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 5)
@@ -73,10 +68,9 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                 if (positionLong.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.LONG);
                     openPositionLong(symbol);
-                    historyBetService.save(symbol, PositionSide.LONG, 1);
                 } else {
                     var valueProfit = calculateTakeProfit(positionLong.getPositionAmt(),
-                            config.get(symbol).getQuantity(),takeProfitLong);
+                            config.get(symbol).getQuantity(), takeProfitLong);
                     log.info("LONG: " + symbol.name() + " " + positionLong.getMarkPrice()
                             + " < " + (positionLong.getEntryPrice() - valueProfit)
                             + " / " + valueProfit + " (" + takeProfitLong
@@ -84,7 +78,6 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                     if (positionLong.getMarkPrice() < positionLong.getEntryPrice() - valueProfit) {
                         openPositionLong(symbol, positionLong);
                         orderProcessing(symbol, PositionSide.LONG);
-                        historyBetService.save(symbol, PositionSide.LONG, -1);
                     }
                 }
             }
@@ -93,7 +86,6 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                 if (positionShort.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.SHORT);
                     openPositionShort(symbol);
-                    historyBetService.save(symbol, PositionSide.SHORT, 1);
                 } else {
                     var valueProfit = calculateTakeProfit(java.lang.Math.abs(positionShort.getPositionAmt()),
                             config.get(symbol).getQuantity(), takeProfitShort);
@@ -104,7 +96,6 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
                     if (positionShort.getMarkPrice() > positionShort.getEntryPrice() + valueProfit) {
                         openPositionShort(symbol, positionShort);
                         orderProcessing(symbol, PositionSide.SHORT);
-                        historyBetService.save(symbol, PositionSide.SHORT, -1);
                     }
                 }
             }
@@ -155,7 +146,7 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
 
     public Double calculateQuantity(Position position, Symbol symbol) {
         var quantity = java.lang.Math.abs(Math.round(position.getPositionAmt() * 2, 2, symbol));
-        if (actualQuantityAboveMax(symbol, position)){
+        if (actualQuantityAboveMax(symbol, position)) {
             quantity = position.getPositionAmt();
         }
         return config.get(symbol).getQuantity() > quantity ? config.get(symbol).getQuantity() : quantity;

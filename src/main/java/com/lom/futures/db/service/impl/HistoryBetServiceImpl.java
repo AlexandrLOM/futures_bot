@@ -15,22 +15,27 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-@Service
+//@Service
 public class HistoryBetServiceImpl implements HistoryBetService {
 
     public final static UUID TAG = UUID.randomUUID();
 
-    HistoryBetRepository historyBetRepository;
-
     @Override
     public HistoryBet save(Symbol symbol, PositionSide positionSide, Integer result) {
-        var historyBet = new HistoryBet();
-        historyBet.setSymbol(symbol.name());
-        historyBet.setPositionSide(positionSide.name());
-        historyBet.setStatus(result);
-        historyBet.setTimestamp(Instant.now());
-        historyBet.setTag(TAG);
-
-        return historyBetRepository.save(historyBet);
+        return null;
     }
+
+//    HistoryBetRepository historyBetRepository;
+
+//    @Override
+//    public HistoryBet save(Symbol symbol, PositionSide positionSide, Integer result) {
+//        var historyBet = new HistoryBet();
+//        historyBet.setSymbol(symbol.name());
+//        historyBet.setPositionSide(positionSide.name());
+//        historyBet.setStatus(result);
+//        historyBet.setTimestamp(Instant.now());
+//        historyBet.setTag(TAG);
+//
+//        return historyBetRepository.save(historyBet);
+//    }
 }

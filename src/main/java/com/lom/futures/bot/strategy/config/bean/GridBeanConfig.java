@@ -1,7 +1,6 @@
 package com.lom.futures.bot.strategy.config.bean;
 
 import com.lom.futures.bot.strategy.config.GridConfig;
-import com.lom.futures.bot.strategy.config.old.OpenOneSideConfig;
 import com.lom.futures.enums.Symbol;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
