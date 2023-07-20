@@ -20,7 +20,7 @@ public class GridBeanConfig {
                         0.7,
                         0.7,
                         0.7,
-                        0.015,
+                        0.03,
                         0.3),
                 Symbol.BTCUSDT,
                 new GridConfig(
@@ -38,7 +38,7 @@ public class GridBeanConfig {
                         0.8,
                         0.8,
                         0.8,
-                        0.12,
+                        0.22,
                         1.95),
                 Symbol.DOTUSDT,
                 new GridConfig(
@@ -47,7 +47,7 @@ public class GridBeanConfig {
                         1.2,
                         1.2,
                         1.2,
-                        5.7,
+                        6.0,
                         93.0),
                 Symbol.NEARUSDT,
                 new GridConfig(
@@ -70,12 +70,12 @@ public class GridBeanConfig {
                 Symbol.ADAUSDT,
                 new GridConfig(
                         Symbol.ADAUSDT,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        96.0,
-                        780.0)
+                        1.3,
+                        1.3,
+                        1.3,
+                        1.3,
+                        50.0,
+                        500.0)
         );
     }
 

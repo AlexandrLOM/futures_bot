@@ -13,6 +13,7 @@ public class Math {
         switch (symbol) {
             case ETHUSDT -> roundTo = roundTo > 2 ? 2 : roundTo;
             case BTCUSDT, DEFIUSDT -> roundTo = roundTo > 1 ? 1 : roundTo;
+            case ADAUSDT -> roundTo = 4;
         }
 
         var multiplier = java.lang.Math.pow(10, roundTo);

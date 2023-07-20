@@ -68,18 +68,6 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
         var takeProfitShort = findNumberFromPercentAndRound(
                 lastKline.getClose(), config.get(symbol).getTakeProfitShort(), 3, symbol);
 
-//        var takeProfitLong = config.get(symbol).getTakeProfitLong();
-//        var takeProfitShort = config.get(symbol).getTakeProfitShort();
-//
-//        switch(symbol){
-//            case ADAUSDT, BTCUSDT, ETHUSDT -> {
-//                takeProfitLong = findNumberFromPercentAndRound(
-//                        lastKline.getClose(), config.get(symbol).getTakeProfitLong(), 3, symbol);
-//                takeProfitShort = findNumberFromPercentAndRound(
-//                        lastKline.getClose(), config.get(symbol).getTakeProfitShort(), 3, symbol);
-//            }
-//        }
-
         try {
             if (lastKline.getOpen() < lastKline.getClose()) {
                 if (positionLong.getPositionAmt() == 0.0) {
@@ -167,6 +155,9 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
 
     public Double calculateQuantity(Position position, Symbol symbol) {
         var quantity = java.lang.Math.abs(Math.round(position.getPositionAmt() * 2, 2, symbol));
+        if (actualQuantityAboveMax(symbol, position)){
+            quantity = position.getPositionAmt();
+        }
         return config.get(symbol).getQuantity() > quantity ? config.get(symbol).getQuantity() : quantity;
     }
 
@@ -177,9 +168,9 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             accountService.newOrderTakeProfitMarketLong(symbol,
                     actualQuantityAboveMax(symbol, position)
                             ? Math.round(position.getEntryPrice()
-                            + (takeProfit / 2), 2, symbol)
+                            + (takeProfit / 2), 3, symbol)
                             : Math.round(position.getEntryPrice()
-                            + takeProfit, 2, symbol));
+                            + takeProfit, 3, symbol));
         }
     }
 
@@ -189,9 +180,9 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             accountService.newOrderTakeProfitMarketShort(symbol,
                     actualQuantityAboveMax(symbol, position)
                             ? Math.round(position.getEntryPrice()
-                            - (takeProfit / 2), 2, symbol)
+                            - (takeProfit / 2), 3, symbol)
                             : Math.round(position.getEntryPrice()
-                            - takeProfit, 2, symbol));
+                            - takeProfit, 3, symbol));
         }
     }
 
