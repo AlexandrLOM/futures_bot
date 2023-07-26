@@ -10,3 +10,22 @@ sudo docker start futures_bot_db
 sudo docker ps -a
 
 sudo docker ps
+
+sudo docker images
+
+sudo docker build --tag grid_bot_v03 .
+sudo docker save -o grid_bot_v03.tar grid_bot_v03
+
+sudo ssh -i "key_bot_v02.pem" ubuntu@3.71.53.20
+
+sudo scp -i "key_bot_v02.pem" grid_bot_v03.tar ubuntu@3.71.53.20:grid_bot
+
+sudo docker load -i grid_bot/grid_bot_v03.tar
+
+sudo docker rm 53d4d6f0539e
+sudo docker stop 42e7106d511b
+
+sudo docker logs 53d4d6f0539e
+
+sudo docker logs -f bf48bc9aa7e2 
+
