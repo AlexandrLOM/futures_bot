@@ -65,7 +65,7 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
 
         try {
             if (lastKline.getOpen() < lastKline.getClose()) {
-                if (positionLong.getPositionAmt() == 0.0) {
+                if (Objects.isNull(positionLong.getPositionAmt()) || positionLong.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.LONG);
                     openPositionLong(symbol);
                 } else {
@@ -83,7 +83,7 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             }
 
             if (lastKline.getOpen() > lastKline.getClose()) {
-                if (positionShort.getPositionAmt() == 0.0) {
+                if (Objects.isNull(positionShort.getPositionAmt()) || positionShort.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.SHORT);
                     openPositionShort(symbol);
                 } else {

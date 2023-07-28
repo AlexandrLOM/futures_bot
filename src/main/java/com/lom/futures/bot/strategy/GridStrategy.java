@@ -24,7 +24,7 @@ public class GridStrategy {
                 .filter(position -> Objects.equals(symbol, position.getSymbol()))
                 .filter(position -> Objects.equals(positionSide, position.getPositionSide()))
                 .findFirst()
-                .orElse(null);
+                .orElse(new Position());
     }
 
     public boolean isPresentOrder(List<Order> orders, Symbol symbol, OrderType orderType, PositionSide positionSide) {
