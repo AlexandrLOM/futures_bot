@@ -67,7 +67,7 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             if (lastKline.getOpen() < lastKline.getClose()) {
                 if (Objects.isNull(positionLong.getPositionAmt()) || positionLong.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.LONG);
-                    openPositionLong(symbol);
+                    openPositionLong(symbol, Optional.ofNullable(positionShort.getPositionAmt()).orElse(0.0));
                 } else {
                     var valueProfit = calculateTakeProfit(positionLong.getPositionAmt(),
                             config.get(symbol).getQuantity(), takeProfitLong);
@@ -85,7 +85,7 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
             if (lastKline.getOpen() > lastKline.getClose()) {
                 if (Objects.isNull(positionShort.getPositionAmt()) || positionShort.getPositionAmt() == 0.0) {
                     orderProcessing(symbol, PositionSide.SHORT);
-                    openPositionShort(symbol);
+                    openPositionShort(symbol, Optional.ofNullable(positionLong.getPositionAmt()).orElse(0.0));
                 } else {
                     var valueProfit = calculateTakeProfit(java.lang.Math.abs(positionShort.getPositionAmt()),
                             config.get(symbol).getQuantity(), takeProfitShort);
@@ -129,6 +129,13 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
         accountService.newOrderMarketLongOpen(symbol, config.get(symbol).getQuantity());
     }
 
+    private void openPositionLong(Symbol symbol, Double quantity) throws JsonProcessingException {
+        log.info(symbol.name() + ". LONG action OPEN!");
+        var newAmount = Math.round(java.lang.Math.abs(quantity / 3), 3, symbol);
+        accountService.newOrderMarketLongOpen(symbol,
+                newAmount > config.get(symbol).getQuantity() ? newAmount : config.get(symbol).getQuantity());
+    }
+
     private void openPositionLong(Symbol symbol, Position position) throws JsonProcessingException {
         log.info(symbol.name() + ". LONG action OPEN!");
         accountService.newOrderMarketLongOpen(symbol, calculateQuantity(position, symbol));
@@ -137,6 +144,13 @@ public class GridOfOrdersBotVer01 extends GridStrategy {
     private void openPositionShort(Symbol symbol) throws JsonProcessingException {
         log.info(symbol.name() + ". SHORT action OPEN!");
         accountService.newOrderMarketShortOpen(symbol, config.get(symbol).getQuantity());
+    }
+
+    private void openPositionShort(Symbol symbol, Double quantity) throws JsonProcessingException {
+        log.info(symbol.name() + ". SHORT action OPEN!");
+        var newAmount = Math.round(java.lang.Math.abs(quantity / 3), 3, symbol);
+        accountService.newOrderMarketShortOpen(symbol,
+                newAmount > config.get(symbol).getQuantity() ? newAmount : config.get(symbol).getQuantity());
     }
 
     private void openPositionShort(Symbol symbol, Position position) throws JsonProcessingException {
