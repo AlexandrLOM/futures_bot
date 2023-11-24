@@ -34,10 +34,19 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
     private LinkedList<ArrayList<String>> getKlines(Symbol symbol, Interval interval, Integer limit,
                                                     Function<LinkedHashMap<String, Object>, String> klinesFunction)
             throws JsonProcessingException {
+        return getKlines(symbol, interval, limit, null, null, klinesFunction);
+    }
+
+    private LinkedList<ArrayList<String>> getKlines(Symbol symbol, Interval interval, Integer limit,
+                                                    Long startTime, Long endTime,
+                                                    Function<LinkedHashMap<String, Object>, String> klinesFunction)
+            throws JsonProcessingException {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.interval.name(), interval.getValue());
         Optional.ofNullable(limit).ifPresent(l -> params.put(Params.limit.name(), l));
+        Optional.ofNullable(startTime).ifPresent(st -> params.put(Params.startTime.name(), st));
+        Optional.ofNullable(endTime).ifPresent(et -> params.put(Params.endTime.name(), et));
         var result = klinesFunction.apply(params);
         return jsonObjectMapper.convertList(result);
     }
@@ -45,6 +54,13 @@ public class MarketServiceImpl extends MarketServiceHelper implements MarketServ
     @Override
     public List<Kline> klines(Symbol symbol, Interval interval, Integer limit) throws JsonProcessingException {
         var list = getKlines(symbol, interval, limit, client.market()::klines);
+        return list.stream().map(this::getKline).toList();
+    }
+
+    @Override
+    public List<Kline> klines(Symbol symbol, Interval interval, Integer limit,
+                              Long startTime, Long endTime) throws JsonProcessingException {
+        var list = getKlines(symbol, interval, limit, startTime, endTime, client.market()::klines);
         return list.stream().map(this::getKline).toList();
     }
 

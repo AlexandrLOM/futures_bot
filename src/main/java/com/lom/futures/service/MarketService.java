@@ -20,4 +20,7 @@ public interface MarketService {
     List<IndexPriceKline> indexPriceKlines(Pair pair, Interval interval, Integer limit) throws JsonProcessingException;
 
     OrderBook depth(Symbol symbol, Integer limit) throws JsonProcessingException;
+
+    List<Kline> klines(Symbol symbol, Interval interval, Integer limit,
+                       Long startTime, Long endTime) throws JsonProcessingException;
 }

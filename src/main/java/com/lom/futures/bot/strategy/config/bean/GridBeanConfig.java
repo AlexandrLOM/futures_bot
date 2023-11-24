@@ -15,68 +15,83 @@ public class GridBeanConfig {
         return Map.of(Symbol.ETHUSDT,
                 new GridConfig(
                         Symbol.ETHUSDT,
-                        0.7,
-                        0.7,
-                        0.7,
-                        0.7,
-                        0.1,
-                        3.0),
-                Symbol.BTCUSDT,
-                new GridConfig(
-                        Symbol.BTCUSDT,
-                        0.6,
-                        0.6,
-                        0.6,
-                        0.6,
-                        0.006,
-                        0.15),
-                Symbol.BNBUSDT,
-                new GridConfig(
-                        Symbol.BNBUSDT,
-                        0.8,
-                        0.8,
-                        0.8,
-                        0.8,
-                        0.7,
-                        20.0),
-                Symbol.DOTUSDT,
-                new GridConfig(
-                        Symbol.DOTUSDT,
-                        1.2,
-                        1.2,
-                        1.2,
-                        1.2,
-                        12.0,
-                        111.0),
-                Symbol.NEARUSDT,
-                new GridConfig(
-                        Symbol.NEARUSDT,
-                        2.5,
-                        2.5,
-                        2.5,
-                        2.5,
-                        45.0,
-                        420.0),
-                Symbol.DEFIUSDT,
-                new GridConfig(
-                        Symbol.DEFIUSDT,
-                        2.0,
-                        2.0,
-                        2.0,
-                        2.0,
-                        0.1,
-                        1.1),
-                Symbol.ADAUSDT,
-                new GridConfig(
-                        Symbol.ADAUSDT,
-                        1.3,
-                        1.3,
-                        1.3,
-                        1.3,
-                        80.0,
-                        750.0)
-        );
+                        0.3,
+                        0.3,
+                        0.3,
+                        0.3,
+                        0.01,
+                        0.045));
     }
+
+}
+
+//    @Bean
+//    public Map<Symbol, GridConfig> gridConfig() {
+//        return Map.of(Symbol.ETHUSDT,
+//                new GridConfig(
+//                        Symbol.ETHUSDT,
+//                        0.7,
+//                        0.7,
+//                        0.7,
+//                        0.7,
+//                        0.1,
+//                        3.0),
+//                Symbol.BTCUSDT,
+//                new GridConfig(
+//                        Symbol.BTCUSDT,
+//                        0.6,
+//                        0.6,
+//                        0.6,
+//                        0.6,
+//                        0.006,
+//                        0.15),
+//                Symbol.BNBUSDT,
+//                new GridConfig(
+//                        Symbol.BNBUSDT,
+//                        0.8,
+//                        0.8,
+//                        0.8,
+//                        0.8,
+//                        0.7,
+//                        20.0),
+//                Symbol.DOTUSDT,
+//                new GridConfig(
+//                        Symbol.DOTUSDT,
+//                        1.2,
+//                        1.2,
+//                        1.2,
+//                        1.2,
+//                        12.0,
+//                        111.0),
+//                Symbol.NEARUSDT,
+//                new GridConfig(
+//                        Symbol.NEARUSDT,
+//                        2.5,
+//                        2.5,
+//                        2.5,
+//                        2.5,
+//                        45.0,
+//                        420.0),
+//                Symbol.DEFIUSDT,
+//                new GridConfig(
+//                        Symbol.DEFIUSDT,
+//                        2.0,
+//                        2.0,
+//                        2.0,
+//                        2.0,
+//                        0.1,
+//                        1.1),
+//                Symbol.ADAUSDT,
+//                new GridConfig(
+//                        Symbol.ADAUSDT,
+//                        1.3,
+//                        1.3,
+//                        1.3,
+//                        1.3,
+//                        80.0,
+//                        750.0)
+//        );
+//    }
 
 //    @Bean
 //    public Map<Symbol, GridConfig> gridConfig() {
@@ -128,4 +143,4 @@ public class GridBeanConfig {
 //        );
 //    }
 
-}
+//}

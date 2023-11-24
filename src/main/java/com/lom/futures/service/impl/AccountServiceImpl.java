@@ -33,6 +33,7 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     OrderService orderService;
     OrderMarket orderMarket;
     OrderStopMarket orderStopMarket;
+    OrderStopLimit orderStopLimit;
     OrderTakeProfitMarket orderTakeProfitMarket;
     QueryOrder queryOrder;
     PositionService positionService;
@@ -87,8 +88,40 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     }
 
     @Override
+    public NewOrder newOrderStopMarketLong(Symbol symbol, Double stopPrice, Double quantity) throws JsonProcessingException {
+        return orderStopMarket.newOrderStopMarketLong(symbol, stopPrice, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderStopMarketBuyLong(Symbol symbol, Double stopPrice, Double quantity) throws JsonProcessingException {
+        return orderStopMarket.newOrderStopMarketBuyLong(symbol, stopPrice, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderStopMarketShort(Symbol symbol, Double stopPrice, Double quantity) throws JsonProcessingException {
+        return orderStopMarket.newOrderStopMarketShort(symbol, stopPrice, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderStopMarketBuyShort(Symbol symbol, Double stopPrice, Double quantity) throws JsonProcessingException {
+        return orderStopMarket.newOrderStopMarketBuyShort(symbol, stopPrice, quantity);
+    }
+
+    @Override
     public NewOrder newOrderStopMarketShort(Symbol symbol, Double stopPrice) throws JsonProcessingException {
         return orderStopMarket.newOrderStopMarketShort(symbol, stopPrice);
+    }
+
+    // newOrderStopLimit
+
+    @Override
+    public NewOrder newOrderStopLimitLong(Symbol symbol, Double stopPrice, Double price, Double quantity) throws JsonProcessingException {
+        return orderStopLimit.newOrderStopLimitLong(symbol, stopPrice, price, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderStopLimitShort(Symbol symbol, Double stopPrice, Double price, Double quantity) throws JsonProcessingException {
+        return orderStopLimit.newOrderStopLimitShort(symbol, stopPrice, price, quantity);
     }
 
     // newOrderTakeProfitMarket
@@ -101,6 +134,27 @@ public class AccountServiceImpl extends AccountServiceHelper implements AccountS
     @Override
     public NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double profitPrice) throws JsonProcessingException {
         return orderTakeProfitMarket.newOrderTakeProfitMarketShort(symbol, profitPrice);
+    }
+
+    @Override
+    public NewOrder newOrderTakeProfitMarketLong(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketLong(symbol, profitPrice, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketShort(symbol, profitPrice, quantity);
+    }
+
+
+    @Override
+    public NewOrder newOrderTakeProfitMarketBuyLong(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketBuyLong(symbol, profitPrice, quantity);
+    }
+
+    @Override
+    public NewOrder newOrderTakeProfitMarketBuyShort(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return orderTakeProfitMarket.newOrderTakeProfitMarketBuyShort(symbol, profitPrice, quantity);
     }
 
 

@@ -36,5 +36,8 @@ public class NewOrder {
     Boolean priceProtect;
     OrderType origType;
     Long updateTime;
+    String priceMatch;
+    String selfTradePreventionMode;
+    String goodTillDate;
 
 }

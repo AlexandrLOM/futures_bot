@@ -28,5 +28,8 @@ public class Position {
     Double unRealizedProfit;
     PositionSide positionSide;
     Long updateTime;
+    Double breakEvenPrice;
+    Boolean isolated;
+    String adlQuantile;
 
 }

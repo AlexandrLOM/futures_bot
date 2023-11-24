@@ -21,11 +21,36 @@ public class OrderTakeProfitMarket extends OrderService {
         return newOrder(symbol, side, positionSide, OrderType.TAKE_PROFIT_MARKET, null, null, true, profitPrice, TimeInForce.GTC);
     }
 
+    public NewOrder newOrder(Symbol symbol,
+                             Side side,
+                             PositionSide positionSide,
+                             Double profitPrice,
+                             Double quantity) throws JsonProcessingException {
+        return newOrder(symbol, side, positionSide, OrderType.TAKE_PROFIT_MARKET, quantity, null, false, profitPrice, TimeInForce.GTC);
+    }
+
     public NewOrder newOrderTakeProfitMarketLong(Symbol symbol, Double profitPrice) throws JsonProcessingException {
         return newOrder(symbol, Side.SELL, PositionSide.LONG, profitPrice);
     }
 
     public NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double profitPrice) throws JsonProcessingException {
         return newOrder(symbol, Side.BUY, PositionSide.SHORT, profitPrice);
+    }
+
+    public NewOrder newOrderTakeProfitMarketLong(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return newOrder(symbol, Side.SELL, PositionSide.LONG, profitPrice, quantity);
+    }
+
+    public NewOrder newOrderTakeProfitMarketShort(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return newOrder(symbol, Side.BUY, PositionSide.SHORT, profitPrice, quantity);
+    }
+
+
+    public NewOrder newOrderTakeProfitMarketBuyLong(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return newOrder(symbol, Side.BUY, PositionSide.LONG, profitPrice, quantity);
+    }
+
+    public NewOrder newOrderTakeProfitMarketBuyShort(Symbol symbol, Double profitPrice, Double quantity) throws JsonProcessingException {
+        return newOrder(symbol, Side.SELL, PositionSide.SHORT, profitPrice, quantity);
     }
 }

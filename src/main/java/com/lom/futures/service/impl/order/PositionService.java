@@ -22,6 +22,7 @@ public class PositionService extends BasicAccountService {
         var params = ClientParametersUtil.createEmptyParameters();
         params.put(Params.symbol.name(), symbol.name());
         params.put(Params.timestamp.name(), timestamp);
+        params.put(Params.recvWindow.name(), 10000);
         var result = client.account().positionInformation(params);
         return jsonObjectMapper.convertPositionInformation(result);
 

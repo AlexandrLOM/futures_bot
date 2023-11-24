@@ -27,7 +27,7 @@ public class MainFutureBot {
 
     List<FuturesBalance> futuresBalance;
 
-    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 60)
+//    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 60)
     public void checkBalance() {
         try {
             List<FuturesBalance> lastBalance;
